@@ -1,0 +1,30 @@
+web:
+  build: .
+  links:
+    - db
+    - redis
+  ports:
+    - "80:3000"
+  env_file: .env
+  environment:
+    - RAILS_ENV=production
+    - REDIS_URL=redis://redis:6379
+    - DB_HOST=db
+
+worker:
+  build: .
+  links:
+    - db
+    - redis
+  env_file: .env
+  environment:
+    - RAILS_ENV=production
+    - REDIS_URL=redis://redis:6379
+    - DB_HOST=db
+  command: bundle exec sidekiq -c 4
+
+db:
+  image: postgres
+
+redis:
+  image: redis
